@@ -27,7 +27,7 @@ python PMA.py
 If you prefer to run without a venv, run with the system Python that has Tk support:
 
 ```bash
-/usr/bin/python3 "Project Management App_GRP2.py"
+/usr/bin/python3 "PMA.py"
 ```
 
 If you run into GUI visibility issues, start the app from Terminal (not detached debugger) and ensure the interpreter has `_tkinter` support.
