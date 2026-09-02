@@ -1,7 +1,7 @@
 <<<<<<< HEAD
 # Project-Management-App
 =======
-# Project Management App (GRP2)
+# Project Management App
 
 This project is a Tkinter-based GUI application for simple project management.
 
