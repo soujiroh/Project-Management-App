@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -216,3 +217,31 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+=======
+.venv/
+.env
+__pycache__/
+*.py[cod]
+*.db
+*.sqlite3
+user_auth.db
+*.log
+.DS_Store
+.vscode/
+.env/
+venv/
+.envrc
+.idea/
+assets/*.psd
+assets/*.ai
+# Mac
+.Spotlight-V100
+.Trashes
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Python cache
+pip-wheel-metadata/
+*.egg-info/
+>>>>>>> 14253ef (Initial commit: PMA rename, assets, UI updates, RoundedButton)
