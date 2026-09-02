@@ -1,13 +1,24 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, scrolledtext
 import sqlite3
-import pandas as pd
-import matplotlib.pyplot as plt
+try:
+    import pandas as pd
+except Exception:
+    pd = None
+try:
+    import matplotlib
+    import matplotlib.pyplot as plt
+except Exception:
+    matplotlib = None
+    plt = None
 import datetime
 import time
 import csv
 import os
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+try:
+    from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+except Exception:
+    FigureCanvasTkAgg = None
 
 # Use modularized DB and analytics helpers
 from pm_app.db import init_db, get_connection
@@ -15,9 +26,17 @@ from pm_app.analytics import save_to_csv_analytics
 from pm_app import navigation
 from pm_app.ui_tasks import show_task_management as show_task_management_module
 from pm_app.db import get_tasks
-import matplotlib.dates as mdates
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
+try:
+    import matplotlib.dates as mdates
+    from matplotlib.figure import Figure
+    from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
+    MPL_AVAILABLE = True
+except Exception:
+    mdates = None
+    Figure = None
+    NavigationToolbar2Tk = None
+    MPL_AVAILABLE = False
+
 try:
     import mplcursors
     MPLCURSORS_AVAILABLE = True
@@ -36,6 +55,9 @@ def show_task_management(role, full_name):
 def show_gantt_chart(role, full_name):
     # Create a simple Gantt chart in a Toplevel using matplotlib
     try:
+        if not MPL_AVAILABLE or Figure is None or mdates is None or FigureCanvasTkAgg is None:
+            messagebox.showerror("Gantt Error", "Matplotlib is not available in this environment.")
+            return
         tasks = get_tasks()
         if not tasks:
             messagebox.showinfo("Gantt Chart", "No tasks to display.")
@@ -205,31 +227,38 @@ def show_dashboard(role, full_name):
 
     # menu buttons
     try:
-        from pm_app.utils import RoundedButton
+        from pm_app.utils import RoundedButton, load_asset
         btn_font = ('Helvetica Neue', 12)
+        # load icons (may return None)
+        ic_progress = load_asset('progress')
+        ic_task = load_asset('task')
+        ic_time = load_asset('time')
+        ic_gantt = load_asset('gantt')
+        ic_budget = load_asset('budget')
+        ic_logout = load_asset('logout')
 
-        b1 = RoundedButton(card, text='Progress', command=lambda: show_progress_tracking(role, full_name), width=160, height=48, radius=12, bg=accent, fg=card_bg, font=btn_font)
+        b1 = RoundedButton(card, text='Progress', image=ic_progress, command=lambda: show_progress_tracking(role, full_name), width=160, height=48, radius=12, bg=accent, fg=card_bg, font=btn_font)
         b1.grid(row=2, column=0, padx=10, pady=8)
         ttk.Label(card, text='Track project progress', background=card_bg, foreground=fg).grid(row=3, column=0)
 
-        b2 = RoundedButton(card, text='Tasks', command=lambda: show_task_management(role, full_name), width=160, height=48, radius=12, bg=accent, fg=card_bg, font=btn_font)
+        b2 = RoundedButton(card, text='Tasks', image=ic_task, command=lambda: show_task_management(role, full_name), width=160, height=48, radius=12, bg=accent, fg=card_bg, font=btn_font)
         b2.grid(row=2, column=1, padx=10, pady=8)
         ttk.Label(card, text='Create and manage tasks', background=card_bg, foreground=fg).grid(row=3, column=1)
 
-        b3 = RoundedButton(card, text='Time Tracker', command=lambda: show_time_tracker(role, full_name), width=160, height=48, radius=12, bg=accent, fg=card_bg, font=btn_font)
+        b3 = RoundedButton(card, text='Time Tracker', image=ic_time, command=lambda: show_time_tracker(role, full_name), width=160, height=48, radius=12, bg=accent, fg=card_bg, font=btn_font)
         b3.grid(row=4, column=0, padx=10, pady=8)
         ttk.Label(card, text='Log time on tasks', background=card_bg, foreground=fg).grid(row=5, column=0)
 
-        b4 = RoundedButton(card, text='Gantt', command=lambda: show_gantt_chart(role, full_name), width=160, height=48, radius=12, bg=accent, fg=card_bg, font=btn_font)
+        b4 = RoundedButton(card, text='Gantt', image=ic_gantt, command=lambda: show_gantt_chart(role, full_name), width=160, height=48, radius=12, bg=accent, fg=card_bg, font=btn_font)
         b4.grid(row=4, column=1, padx=10, pady=8)
         ttk.Label(card, text='View project timeline', background=card_bg, foreground=fg).grid(row=5, column=1)
 
-        b5 = RoundedButton(card, text='Budget', command=lambda: show_budget_management(role, full_name), width=340, height=48, radius=12, bg='#0b1220', fg=accent, font=btn_font)
+        b5 = RoundedButton(card, text='Budget', image=ic_budget, command=lambda: show_budget_management(role, full_name), width=340, height=48, radius=12, bg='#0b1220', fg=accent, font=btn_font)
         b5.grid(row=6, column=0, columnspan=2, pady=(12,6))
         ttk.Label(card, text='Manage budgets and expenses', background=card_bg, foreground=fg).grid(row=7, column=0, columnspan=2)
 
         # logout small button
-        out_btn = RoundedButton(card, text='Logout', command=logout, width=120, height=36, radius=10, bg='#3b4552', fg=fg, font=('Helvetica Neue', 11))
+        out_btn = RoundedButton(card, text='Logout', image=ic_logout, command=logout, width=120, height=36, radius=10, bg='#3b4552', fg=fg, font=('Helvetica Neue', 11))
         out_btn.grid(row=8, column=0, columnspan=2, pady=(12,0))
     except Exception:
         # fallback to simple ttk buttons
@@ -402,7 +431,16 @@ def main_screen():
     card.place(relx=0.5, rely=0.45, anchor='center')
 
     # optional logo / mark
-    logo = ttk.Label(card, text='⚙️', font=('Helvetica', 28), background=card_bg)
+    try:
+        from pm_app.utils import load_asset
+        logo_img = load_asset('gantt') or load_asset('task')
+    except Exception:
+        logo_img = None
+    if logo_img:
+        logo = ttk.Label(card, image=logo_img, background=card_bg)
+        logo.image = logo_img
+    else:
+        logo = ttk.Label(card, text='⚙️', font=('Helvetica', 28), background=card_bg)
     logo.grid(row=0, column=0, rowspan=2, padx=(0,12))
 
     title = ttk.Label(card, text='Project Management', style='Header.TLabel')

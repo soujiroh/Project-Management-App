@@ -60,13 +60,15 @@ def show_time_tracker(root, role, full_name):
     timer_label.pack(pady=10)
 
     try:
-        from pm_app.utils import RoundedButton, get_theme
+        from pm_app.utils import RoundedButton, get_theme, load_asset
         theme = get_theme()
-        start_btn = RoundedButton(root, text='▶️ Start Timer', command=lambda: start_task_timer(full_name, task_var.get(), timer_label), width=140, height=36, radius=8, bg=theme['accent'], fg=theme['card_bg'], font=('Helvetica Neue', 11))
+        ic_time = load_asset('time')
+        ic_gantt = load_asset('gantt')
+        start_btn = RoundedButton(root, text='Start Timer', image=ic_time, command=lambda: start_task_timer(full_name, task_var.get(), timer_label), width=140, height=36, radius=8, bg=theme['accent'], fg=theme['card_bg'], font=('Helvetica Neue', 11))
         start_btn.pack(pady=6)
-        stop_btn = RoundedButton(root, text='⏹️ Stop Timer', command=lambda: stop_task_timer(full_name, task_var.get()), width=140, height=36, radius=8, bg=theme['card_bg'], fg=theme['fg'], font=('Helvetica Neue', 11))
+        stop_btn = RoundedButton(root, text='Stop Timer', image=ic_time, command=lambda: stop_task_timer(full_name, task_var.get()), width=140, height=36, radius=8, bg=theme['card_bg'], fg=theme['fg'], font=('Helvetica Neue', 11))
         stop_btn.pack(pady=6)
-        back_btn = RoundedButton(root, text='◀️ Back', command=lambda: navigation.go_dashboard(role, full_name), width=120, height=36, radius=8, bg=theme['card_bg'], fg=theme['fg'], font=('Helvetica Neue', 11))
+        back_btn = RoundedButton(root, text='Back', image=ic_gantt, command=lambda: navigation.go_dashboard(role, full_name), width=120, height=36, radius=8, bg=theme['card_bg'], fg=theme['fg'], font=('Helvetica Neue', 11))
         back_btn.pack(pady=10)
     except Exception:
         import tkinter as _tk

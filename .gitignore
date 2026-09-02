@@ -241,6 +241,9 @@ assets/*.ai
 # Jupyter
 .ipynb_checkpoints/
 
+# Allow workspace settings file (committed for consistent interpreter path)
+!.vscode/settings.json
+
 # Python cache
 pip-wheel-metadata/
 *.egg-info/

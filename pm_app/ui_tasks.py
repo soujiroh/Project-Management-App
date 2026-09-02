@@ -127,11 +127,12 @@ def show_task_management(root, role, full_name):
 
         # Styled rounded buttons if available
         try:
-            from pm_app.utils import RoundedButton, get_theme
+            from pm_app.utils import RoundedButton, get_theme, load_asset
             theme = get_theme()
-            add_btn = RoundedButton(root, text='➕ Add Task', command=_add_task, width=140, height=40, radius=10, bg=theme['accent'], fg=theme['card_bg'], font=('Helvetica Neue', 11))
+            ic_task = load_asset('task')
+            add_btn = RoundedButton(root, text='Add Task', image=ic_task, command=_add_task, width=140, height=40, radius=10, bg=theme['accent'], fg=theme['card_bg'], font=('Helvetica Neue', 11))
             add_btn.pack(pady=6)
-            del_btn = RoundedButton(root, text='🗑️ Delete Task', command=_delete_task_ui, width=140, height=40, radius=10, bg=theme['card_bg'], fg=theme['fg'], font=('Helvetica Neue', 11))
+            del_btn = RoundedButton(root, text='Delete Task', image=ic_task, command=_delete_task_ui, width=140, height=40, radius=10, bg=theme['card_bg'], fg=theme['fg'], font=('Helvetica Neue', 11))
             del_btn.pack(pady=6)
         except Exception:
             import tkinter as _tk
@@ -145,9 +146,12 @@ def show_task_management(root, role, full_name):
     try:
         from pm_app.utils import RoundedButton, get_theme
         theme = get_theme()
-        ref_btn = RoundedButton(root, text='🔄 Refresh Task List', command=_view_tasks, width=180, height=36, radius=8, bg=theme['card_bg'], fg=theme['fg'], font=('Helvetica Neue', 11))
+        from pm_app.utils import load_asset
+        ic_progress = load_asset('progress')
+        ref_btn = RoundedButton(root, text='Refresh Task List', image=ic_progress, command=_view_tasks, width=180, height=36, radius=8, bg=theme['card_bg'], fg=theme['fg'], font=('Helvetica Neue', 11))
         ref_btn.pack(pady=6)
-        back_btn = RoundedButton(root, text='◀️ Back', command=lambda: navigation.go_dashboard(role, full_name), width=120, height=36, radius=8, bg=theme['card_bg'], fg=theme['fg'], font=('Helvetica Neue', 11))
+        ic_gantt = load_asset('gantt')
+        back_btn = RoundedButton(root, text='Back', image=ic_gantt, command=lambda: navigation.go_dashboard(role, full_name), width=120, height=36, radius=8, bg=theme['card_bg'], fg=theme['fg'], font=('Helvetica Neue', 11))
         back_btn.pack(pady=10)
     except Exception:
         import tkinter as _tk

@@ -62,7 +62,7 @@ def show_progress_tracking(root, role, full_name):
     progress_frame.pack(fill=tk.BOTH, expand=True)
     _widgets['progress_frame'] = progress_frame
 
-    summary = ttk.Label(root, text="📊 Overall Project Completion: 0%", font=("Arial", 12))
+    summary = ttk.Label(root, text="Overall Project Completion: 0%", font=("Arial", 12))
     summary.pack(pady=5)
     _widgets['summary_label'] = summary
 
@@ -113,7 +113,7 @@ def show_progress_tracking(root, role, full_name):
                 pass
 
         average = round(total / count, 2) if count > 0 else 0
-        summary.config(text=f"📊 Overall Project Completion: {average}%")
+        summary.config(text=f"Overall Project Completion: {average}%")
         tree.pack(fill=tk.BOTH, expand=True)
         _widgets['progress_tree'] = tree
 
@@ -178,7 +178,9 @@ def show_progress_tracking(root, role, full_name):
         try:
             from pm_app.utils import RoundedButton, get_theme
             theme = get_theme()
-            upd = RoundedButton(root, text='✅ Update Selected Task', command=_update_selected_task, width=220, height=40, radius=10, bg=theme['accent'], fg=theme['card_bg'], font=('Helvetica Neue', 11))
+            from pm_app.utils import load_asset
+            ic_progress = load_asset('progress')
+            upd = RoundedButton(root, text='Update Selected Task', image=ic_progress, command=_update_selected_task, width=220, height=40, radius=10, bg=theme['accent'], fg=theme['card_bg'], font=('Helvetica Neue', 11))
             upd.pack(pady=8)
         except Exception:
             import tkinter as _tk
@@ -187,7 +189,9 @@ def show_progress_tracking(root, role, full_name):
     try:
         from pm_app.utils import RoundedButton, get_theme
         theme = get_theme()
-        back = RoundedButton(root, text='◀️ Back', command=lambda: navigation.go_dashboard(role, full_name), width=220, height=36, radius=8, bg=theme['card_bg'], fg=theme['fg'], font=('Helvetica Neue', 11))
+        from pm_app.utils import load_asset
+        ic_gantt = load_asset('gantt')
+        back = RoundedButton(root, text='Back', image=ic_gantt, command=lambda: navigation.go_dashboard(role, full_name), width=220, height=36, radius=8, bg=theme['card_bg'], fg=theme['fg'], font=('Helvetica Neue', 11))
         back.pack(pady=10)
     except Exception:
         import tkinter as _tk

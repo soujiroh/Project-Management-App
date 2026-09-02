@@ -60,9 +60,10 @@ def show_budget_management(root, role, full_name):
     amount_entry.pack()
 
     try:
-        from pm_app.utils import RoundedButton, get_theme
+        from pm_app.utils import RoundedButton, get_theme, load_asset
         theme = get_theme()
-        submit_btn = RoundedButton(root, text='📤 Submit Request', command=lambda: request_budget(full_name, project_entry.get(), amount_entry.get()), width=260, height=40, radius=10, bg=theme['accent'], fg=theme['card_bg'], font=('Helvetica Neue', 11))
+        ic_budget = load_asset('budget')
+        submit_btn = RoundedButton(root, text='Submit Request', image=ic_budget, command=lambda: request_budget(full_name, project_entry.get(), amount_entry.get()), width=260, height=40, radius=10, bg=theme['accent'], fg=theme['card_bg'], font=('Helvetica Neue', 11))
         submit_btn.pack(pady=10)
     except Exception:
         import tkinter as _tk
@@ -81,10 +82,11 @@ def show_budget_management(root, role, full_name):
             budget_tree.insert("", "end", values=row)
 
         try:
-            from pm_app.utils import RoundedButton
-            a_btn = RoundedButton(root, text='✅ Approve', command=lambda: _approve_budget_request_ui(budget_tree), width=200, height=36, radius=8, bg='#16a34a', fg='white')
+            from pm_app.utils import RoundedButton, load_asset
+            ic_budget = load_asset('budget')
+            a_btn = RoundedButton(root, text='Approve', image=ic_budget, command=lambda: _approve_budget_request_ui(budget_tree), width=200, height=36, radius=8, bg='#16a34a', fg='white')
             a_btn.pack(pady=5)
-            r_btn = RoundedButton(root, text='❌ Reject', command=lambda: _reject_budget_request_ui(budget_tree), width=200, height=36, radius=8, bg='#e53e3e', fg='white')
+            r_btn = RoundedButton(root, text='Reject', image=ic_budget, command=lambda: _reject_budget_request_ui(budget_tree), width=200, height=36, radius=8, bg='#e53e3e', fg='white')
             r_btn.pack(pady=5)
         except Exception:
             import tkinter as _tk
@@ -93,7 +95,9 @@ def show_budget_management(root, role, full_name):
 
     try:
         from pm_app.utils import RoundedButton
-        back = RoundedButton(root, text='◀️ Back', command=lambda: navigation.go_dashboard(role, full_name), width=220, height=36, radius=8, bg='#111827', fg='#e6eef6')
+        from pm_app.utils import load_asset
+        ic_gantt = load_asset('gantt')
+        back = RoundedButton(root, text='Back', image=ic_gantt, command=lambda: navigation.go_dashboard(role, full_name), width=220, height=36, radius=8, bg='#111827', fg='#e6eef6')
         back.pack(pady=10)
     except Exception:
         import tkinter as _tk

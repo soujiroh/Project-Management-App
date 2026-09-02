@@ -1,4 +1,5 @@
 import datetime
+import os
 import tkinter as tk
 
 
@@ -64,11 +65,32 @@ def center_window(win, width=None, height=None, parent=None):
         pass
 
 
+_ASSET_CACHE = {}
+
+
+def load_asset(name: str):
+    """Load and cache a PNG from the project's assets/ folder.
+    Returns a tkinter.PhotoImage or None if loading failed.
+    """
+    try:
+        if name in _ASSET_CACHE:
+            return _ASSET_CACHE[name]
+        base = os.path.dirname(os.path.dirname(__file__))
+        path = os.path.join(base, 'assets', f"{name}.png")
+        if not os.path.exists(path):
+            return None
+        img = tk.PhotoImage(file=path)
+        _ASSET_CACHE[name] = img
+        return img
+    except Exception:
+        return None
+
+
 class RoundedButton:
     """A simple rounded-corner button implemented on a Canvas.
     Provides `pack`, `grid`, and `place` proxies so it can be used like a widget.
     """
-    def __init__(self, master, text, command=None, width=120, height=36, radius=10, bg='#06b6d4', fg='white', font=None):
+    def __init__(self, master, text, command=None, width=120, height=36, radius=10, bg='#06b6d4', fg='white', font=None, image=None, compound='left'):
         self.master = master
         self._cmd = command
         self.width = width
@@ -77,6 +99,9 @@ class RoundedButton:
         self.bg = bg
         self.fg = fg
         self.font = font or ('Helvetica Neue', 12, 'bold')
+        # optional icon (tk.PhotoImage)
+        self._image = image
+        self._compound = compound
 
         self.canvas = tk.Canvas(master, width=width, height=height, highlightthickness=0, bd=0, bg=master.cget('background'))
         # make focusable for keyboard navigation
@@ -134,7 +159,24 @@ class RoundedButton:
         self.canvas.create_oval(w-2*r, 0, w, 2*r, outline=fill_color, fill=fill_color, tags=('btn',))
         self.canvas.create_oval(0, h-2*r, 2*r, h, outline=fill_color, fill=fill_color, tags=('btn',))
         self.canvas.create_oval(w-2*r, h-2*r, w, h, outline=fill_color, fill=fill_color, tags=('btn',))
-        self.canvas.create_text(w//2, h//2, text=str(self._get_text()), fill=self.fg, font=self.font, tags=('btn',))
+        # draw icon if present, left or right of the text
+        text_x = w//2
+        if self._image:
+            try:
+                img_w = self._image.width()
+                img_h = self._image.height()
+            except Exception:
+                img_w = img_h = min(20, h-8)
+            if self._compound == 'left':
+                img_x = 12
+                text_x = max(w//2, img_x + img_w + 8)
+                self.canvas.create_image(img_x, h//2, image=self._image, anchor='w', tags=('btn',))
+            else:
+                img_x = w - 12 - img_w
+                text_x = min(w//2, img_x - 8)
+                self.canvas.create_image(img_x, h//2, image=self._image, anchor='w', tags=('btn',))
+
+        self.canvas.create_text(text_x, h//2, text=str(self._get_text()), fill=self.fg, font=self.font, tags=('btn',))
         # focus outline
         if self._has_focus:
             try:
